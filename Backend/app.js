@@ -20,6 +20,11 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
+// Test route to check if server is running
+app.get("/api/test", (req, res) => {
+  res.json({ message: "API is working" });
+});
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/vehicles", vehicleRoutes);

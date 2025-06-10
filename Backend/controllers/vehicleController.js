@@ -1,6 +1,5 @@
 const Vehicle = require("../models/Vehicle");
 const cloudinary = require("../config/cloudinary");
-const fs = require("fs");
 
 exports.addVehicle = async (req, res) => {
   try {
@@ -12,7 +11,6 @@ exports.addVehicle = async (req, res) => {
         folder: "jivhala-vehicles",
       });
       imageUrls.push(result.secure_url);
-      fs.unlinkSync(file.path); // cleanup
     }
 
     const vehicle = new Vehicle({ ...req.body, imageUrls });

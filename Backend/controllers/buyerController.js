@@ -1,6 +1,5 @@
 const Buyer = require("../models/Buyer");
 const Vehicle = require("../models/Vehicle");
-const generatePDF = require("../utils/generatePDF");
 const cloudinary = require("../config/cloudinary");
 const fs = require("fs");
 const generateBuyerPDF = require("../utils/generatePDF");
@@ -8,7 +7,19 @@ const generateBuyerPDF = require("../utils/generatePDF");
 exports.vehicleOut = async (req, res) => {
   try {
     const { vehicleId } = req.body;
-    const buyerInfo = JSON.parse(req.body.buyerInfo); // In case sent as FormData
+
+    // Safely parse buyerInfo if present
+    let buyerInfo = {};
+    if (req.body.buyerInfo) {
+      try {
+        buyerInfo = JSON.parse(req.body.buyerInfo);
+      } catch (parseErr) {
+        return res.status(400).json({ message: "Invalid buyerInfo JSON", error: parseErr.message });
+      }
+    } else {
+      return res.status(400).json({ message: "buyerInfo is required" });
+    }
+
     let imageUrl = "";
 
     // Handle Image Upload (optional)
@@ -18,8 +29,10 @@ exports.vehicleOut = async (req, res) => {
       });
       imageUrl = uploadResult.secure_url;
 
-      // Optional: Remove temp file after upload
-      fs.unlinkSync(req.file.path);
+      // Remove temp file after upload, only if it's a local file
+      if (req.file.path && !req.file.path.startsWith("http")) {
+        fs.unlinkSync(req.file.path);
+      }
     }
 
     // Create Buyer
@@ -43,11 +56,14 @@ exports.vehicleOut = async (req, res) => {
 };
 
 exports.generateBuyerPDF = async (req, res) => {
-  // Fetch buyer data from DB
-  const buyer = await Buyer.findById(req.params.id);
-  if (!buyer) return res.status(404).send("Buyer not found");
+  try {
+    const buyer = await Buyer.findById(req.params.id);
+    if (!buyer) return res.status(404).send("Buyer not found");
 
-  res.setHeader("Content-Type", "application/pdf");
-  res.setHeader("Content-Disposition", "attachment; filename=buyer.pdf");
-  generateBuyerPDF(buyer, res);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=buyer.pdf");
+    generateBuyerPDF(buyer, res);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to generate PDF", error: err.message });
+  }
 };
