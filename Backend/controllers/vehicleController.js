@@ -6,14 +6,12 @@ exports.addVehicle = async (req, res) => {
     const files = req.files;
     const imageUrls = [];
 
+    // Collect Cloudinary URLs from multer-storage-cloudinary
     for (const file of files) {
-      const result = await cloudinary.uploader.upload(file.path, {
-        folder: "jivhala-vehicles",
-      });
-      imageUrls.push(result.secure_url);
+      imageUrls.push(file.path); // file.path is the Cloudinary URL
     }
 
-    const vehicle = new Vehicle({ ...req.body, imageUrls });
+    const vehicle = new Vehicle({ ...req.body, images: imageUrls });
     await vehicle.save();
     res.status(201).json(vehicle);
   } catch (err) {
