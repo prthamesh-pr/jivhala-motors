@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional custom global styles */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #F2F2F2; /* Light gray background */
+  margin: 0;
+  padding: 0;
+  color: #1F2937; /* Dark gray text */
+}
+
+/* Scrollbar styling (optional) */
+::-webkit-scrollbar {
+width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+background-color: #9CA3AF; /* gray-400 */
+border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+background: #E5E7EB; /* gray-200 */
+}

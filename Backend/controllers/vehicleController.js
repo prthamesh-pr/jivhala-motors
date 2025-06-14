@@ -28,6 +28,19 @@ exports.getVehicles = async (req, res) => {
   }
 };
 
+// NEW: Get a single vehicle by ID
+exports.getVehicleById = async (req, res) => {
+  try {
+    const vehicle = await Vehicle.findById(req.params.id).populate("buyer");
+    if (!vehicle) {
+      return res.status(404).json({ message: "Vehicle not found" });
+    }
+    res.status(200).json(vehicle);
+  } catch (err) {
+    res.status(400).json({ message: "Invalid vehicle ID" });
+  }
+};
+
 exports.deleteVehicle = async (req, res) => {
   try {
     await Vehicle.findByIdAndDelete(req.params.id);

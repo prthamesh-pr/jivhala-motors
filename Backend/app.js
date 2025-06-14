@@ -1,4 +1,3 @@
-// app.js
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
@@ -25,7 +24,7 @@ app.get("/api/test", (req, res) => {
   res.json({ message: "API is working" });
 });
 
-// Routes
+// Auth, Vehicle, and Buyer routes
 app.use("/api/auth", authRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/buyers", buyerRoutes);
