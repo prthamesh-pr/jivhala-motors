@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
+import jsPDF from "jspdf";
 
 const VehicleDetails = () => {
   const navigate = useNavigate();
@@ -68,13 +69,36 @@ const VehicleDetails = () => {
   };
 
   const handleVehicleOut = () => {
-    navigate(`/vehicle-out/${id}`);
+    navigate(`/buyers/out/${id}`);
   };
 
   const handleGeneratePDF = () => {
-    // Implement your PDF generation logic here
-    alert("Generate PDF functionality not implemented.");
-  };
+  const doc = new jsPDF();
+
+  doc.setFontSize(16);
+  doc.text("Vehicle Details", 20, 20);
+
+  const details = [
+    ["Vehicle Number", vehicle.vehicleNumber],
+    ["HP", vehicle.hp],
+    ["Chassis Number", vehicle.chassisNumber],
+    ["Engine Number", vehicle.engineNumber],
+    ["Model", vehicle.model],
+    ["Owner Name", vehicle.ownerName],
+    ["Mobile Number", vehicle.mobileNumber],
+    ["Insurance Date", vehicle.insuranceDate],
+    ["RC", vehicle.rc ? "Yes" : "No"],
+    ["PUC", vehicle.puc ? "Yes" : "No"],
+    ["NOC", vehicle.noc ? "Yes" : "No"],
+  ];
+
+  details.forEach(([label, value], idx) => {
+    doc.setFontSize(12);
+    doc.text(`${label}: ${value || ""}`, 20, 30 + idx * 10);
+  });
+
+  doc.save(`vehicle-${vehicle.vehicleNumber || id}.pdf`);
+};
 
   if (loading) {
     return (

@@ -53,25 +53,24 @@ export default function VehicleOut() {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    Object.entries(buyerData).forEach(([key, value]) => {
-      formData.append(key, value);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const formData = new FormData();
+  // Send all buyer data as a single object
+  formData.append("outInfo", JSON.stringify(buyerData));
+  if (buyerPhoto) {
+    formData.append("buyerPhoto", buyerPhoto);
+  }
+  try {
+    await api.post(`/vehicles/${id}/out`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
-    if (buyerPhoto) {
-      formData.append("buyerPhoto", buyerPhoto);
-    }
-    try {
-      await api.post(`/vehicles/${id}/out`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      alert("Buyer info saved!");
-      navigate("/home");
-    } catch (err) {
-      alert("Failed to save buyer info.");
-    }
-  };
+    alert("Buyer info saved!");
+    navigate("/home");
+  } catch (err) {
+    alert("Failed to save buyer info.");
+  }
+};
 
   if (loading) {
     return (
